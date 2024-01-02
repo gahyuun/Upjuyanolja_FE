@@ -59,6 +59,8 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
-    "prettier": "^3.0.3"
+    "jest": "^27.5.1",
+    "prettier": "^3.0.3",
+    "tsconfig-paths-webpack-plugin": "^4.1.0"
   }
 }
