@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -44,3 +45,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+=======
+# Upjuyanolja_FE
+B2B Self-coupon Admin(Backoffice) 서비스 개발 FE 레포지토리 입니다. 
+>>>>>>> fe11b19bf6f74c47bb890d75901582f9815daeb3
