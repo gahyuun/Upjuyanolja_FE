@@ -1,5 +1,4 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import './App.less';
 import { ROUTES } from './constants/routes';
 import { SignIn } from './pages/sign-in';
 import { SignInAgreement } from './pages/sign-in-agreement';
