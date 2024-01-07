@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { server } from 'src/mocks/server';
 import { HttpResponse, http } from 'msw';
-import staticsData from 'public/data/main/staticsData.json';
+import staticsData from '@assets/data/staticsData.json';
 
 jest.mock('@ant-design/plots', () => ({
   Column: () => null,

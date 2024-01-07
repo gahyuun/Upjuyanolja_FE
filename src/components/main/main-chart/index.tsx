@@ -4,83 +4,11 @@ import { Column } from '@ant-design/plots';
 import { ShapeAttrs } from '@antv/g-base';
 import { Space } from 'antd';
 import { TextBox } from '@components/text-box';
+import { mainChartProps } from './type';
 
-export const MainChart = () => {
-  const data = [
-    {
-      year: '02/07',
-      value: 3,
-      type: '쿠폰 사용 매출',
-    },
-    {
-      year: '02/08',
-      value: 4,
-      type: '쿠폰 사용 매출',
-    },
-    {
-      year: '02/09',
-      value: 3.5,
-      type: '쿠폰 사용 매출',
-    },
-    {
-      year: '02/10',
-      value: 5,
-      type: '쿠폰 사용 매출',
-    },
-    {
-      year: '02/11',
-      value: 4.9,
-      type: '쿠폰 사용 매출',
-    },
-    {
-      year: '02/12',
-      value: 6,
-      type: '쿠폰 사용 매출',
-    },
-    {
-      year: '02/13',
-      value: 7,
-      type: '쿠폰 사용 매출',
-    },
-    {
-      year: '02/07',
-      value: 3,
-      type: '쿠폰 미사용 매출',
-    },
-    {
-      year: '02/08',
-      value: 4,
-      type: '쿠폰 미사용 매출',
-    },
-    {
-      year: '02/09',
-      value: 3.5,
-      type: '쿠폰 미사용 매출',
-    },
-    {
-      year: '02/10',
-      value: 5,
-      type: '쿠폰 미사용 매출',
-    },
-    {
-      year: '02/11',
-      value: 4.9,
-      type: '쿠폰 미사용 매출',
-    },
-    {
-      year: '02/12',
-      value: 6,
-      type: '쿠폰 미사용 매출',
-    },
-    {
-      year: '02/13',
-      value: 7,
-      type: '쿠폰 미사용 매출',
-    },
-  ];
-
+export const MainChart = ({ revenueData }: mainChartProps) => {
   const config = {
-    data,
+    data: revenueData,
     isStack: true,
     seriesField: 'type',
     xField: 'year',
