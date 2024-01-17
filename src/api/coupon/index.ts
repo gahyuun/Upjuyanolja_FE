@@ -1,6 +1,8 @@
 import { Response } from '@/types/api';
 import { instance } from '..';
 import {
+  BuyCouponData,
+  BuyCouponParams,
   CouponDeleteParams,
   CouponEditParams,
   CouponRoomList,
@@ -30,4 +32,8 @@ export const COUPON_API = {
     instance.get<Response<CouponRoomList>>(
       '/api/coupons/backoffice/buy/accommodationId',
     ),
+  buyCoupon: (params: BuyCouponParams) =>
+    instance.post<Response<BuyCouponData>>('/api/coupons/backoffice/buy', {
+      params,
+    }),
 };
