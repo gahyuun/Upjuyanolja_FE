@@ -51,7 +51,7 @@ export const MainChart = ({ revenueData, couponMessage }: mainChartProps) => {
             </TextBox>
           </StyledChartLabel>
           <StyledChartLabel>
-            <StyledCharLabelColor color={colors.black500} />
+            <StyledCharLabelColor color={colors.paleGray} />
             <TextBox typography="body5" fontWeight={400}>
               쿠폰 미사용 매출
             </TextBox>
