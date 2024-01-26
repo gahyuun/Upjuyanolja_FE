@@ -80,7 +80,7 @@ export const AccommodationInfo = () => {
               </TextBox>
               <CustomButton
                 text="수정"
-                icon={<EditOutlined />}
+                icon={<StyledEditOutlined />}
                 onClick={handleAccommodationEdit}
               />
             </StyledTextHeadWrapper>
@@ -98,7 +98,7 @@ export const AccommodationInfo = () => {
               <List.Item>
                 <List.Item.Meta
                   title="숙소 위치 :"
-                  description={`[${accommodationData.zipCode}] ${accommodationData.address}`}
+                  description={`[${accommodationData.zipCode}] ${accommodationData.address} ${accommodationData.detailAddress}`}
                 />
               </List.Item>
               <List.Item>
@@ -212,4 +212,8 @@ const StyledTextHeadWrapper = styled.div`
 
 const StyledDescWrapper = styled.div`
   font-size: 14px;
+`;
+
+const StyledEditOutlined = styled(EditOutlined)`
+  font-size: 18px;
 `;

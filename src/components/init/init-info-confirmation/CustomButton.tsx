@@ -21,24 +21,22 @@ const StyledButton = styled(Button)`
 
   padding: 2px 4px;
 
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   font-weight: 700;
   text-shadow: none;
 
-  box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
 
   border: none;
-
-  box-shadow: none;
 
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 4px;
 
-  width: 60px;
-  height: 28px;
+  width: 57px;
+  height: 25px;
 
   &:focus {
     border: none;

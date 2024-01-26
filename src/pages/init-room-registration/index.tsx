@@ -103,7 +103,10 @@ export const InitRoomRegistration = () => {
   }, []);
 
   const resetStateAndNavigate = () => {
-    if (userInputValue[0].editRoomIndex !== -1) {
+    if (
+      userInputValue[0].editRoomIndex !== undefined &&
+      userInputValue[0].editRoomIndex !== -1
+    ) {
       message.success('수정되었습니다.');
     }
 
@@ -389,8 +392,6 @@ const StyledWrapper = styled.div`
   padding: 40px;
 
   border-radius: 8px;
-
-  margin-top: 204px;
 `;
 
 const StyledModalWrapper = styled.div`
