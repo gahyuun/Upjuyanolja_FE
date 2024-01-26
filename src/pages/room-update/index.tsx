@@ -11,11 +11,7 @@ import { CountContainer } from '@components/room/num-of-rooms-container';
 import { TimeContainer } from '@components/room/time-container';
 import { StatusContainer } from '@components/room/status-container';
 import { useRecoilState } from 'recoil';
-import {
-  addedImageFileState,
-  deletedImageFileState,
-  imageRoomFileState,
-} from '@stores/room/atoms';
+import { deletedImageFileState } from '@stores/room/atoms';
 import { RoomUpdateData } from '@api/room/type';
 import { useGetRoomDetail, useUpdateRoom } from '@queries/room';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -24,7 +20,7 @@ import moment from 'moment';
 import { useImageFile } from '@queries/init';
 import { ROUTES } from '@/constants/routes';
 import { AxiosError } from 'axios';
-import { checkedRoomOptions } from '@stores/init/atoms';
+import { checkedRoomOptions, imageFileState } from '@stores/init/atoms';
 
 const RoomUpdate = () => {
   const navigate = useNavigate();
@@ -41,14 +37,22 @@ const RoomUpdate = () => {
     roomId: string;
   }>();
 
-  const { data, isLoading, error } = useGetRoomDetail(roomId, {
-    select(data) {
-      return data.data;
+  const { data, isLoading, error } = useGetRoomDetail(
+    roomId,
+    accommodationId as string,
+    {
+      select(data) {
+        return data.data;
+      },
     },
-  });
+  );
 
   const [form] = Form.useForm();
-  const [imageFile, setImageFile] = useRecoilState(imageRoomFileState);
+
+  const [imageFile, setImageFile] = useRecoilState(imageFileState);
+  const [deletedImageFile, setDeletedImageFile] = useRecoilState(
+    deletedImageFileState,
+  );
 
   useEffect(() => {
     if (data && !isLoading && !error) {
@@ -56,8 +60,8 @@ const RoomUpdate = () => {
         url: image.url,
         key: index,
         file: null,
+        id: image.id,
       }));
-
       form.setFieldsValue({
         'room-name': data.name,
         price: data.price.toString(),
@@ -66,44 +70,49 @@ const RoomUpdate = () => {
         checkInTime: moment(data.checkInTime, 'HH:mm'),
         checkOutTime: moment(data.checkOutTime, 'HH:mm'),
         count: data.amount,
+        status: data.status === 'SELLING',
       });
       setImageFile(imageObjects);
       setSelectedInitRoomOptions(data.option);
+      setDeletedImageFile([]);
     }
   }, [data, isLoading, error, form]);
 
-  const { mutate: updateRoom } = useUpdateRoom(roomId as string, {
-    onSuccess() {
-      message.success({
-        content: '수정되었습니다',
-        className: 'coupon-message',
-      });
-      navigate(`/${accommodationId}${ROUTES.ROOM}`);
+  useEffect(() => {
+    return () => {
       setImageFile([]);
-      setAddedImageFile([]);
       setDeletedImageFile([]);
       setSelectedInitRoomOptions({
         airCondition: false,
         tv: false,
         internet: false,
       });
-    },
-    onError(error) {
-      if (error instanceof AxiosError)
-        message.error('요청에 실패했습니다 잠시 후 다시 시도해주세요');
-    },
-  });
+    };
+  }, []);
 
-  const [addedImageFile, setAddedImageFile] =
-    useRecoilState(addedImageFileState);
-  const [deletedImageFile, setDeletedImageFile] = useRecoilState(
-    deletedImageFileState,
+  const { mutate: updateRoom } = useUpdateRoom(
+    roomId as string,
+    accommodationId as string,
+    {
+      onSuccess() {
+        message.success({
+          content: '수정되었습니다',
+          className: 'coupon-message',
+        });
+        navigate(`/${accommodationId}${ROUTES.ROOM}`);
+      },
+      onError(error) {
+        if (error instanceof AxiosError)
+          message.error('요청에 실패했습니다 잠시 후 다시 시도해주세요');
+      },
+    },
   );
+
   const [selectedInitRoomOptions, setSelectedInitRoomOptions] =
     useRecoilState(checkedRoomOptions);
 
   const { mutate: getImageUrl } = useImageFile({
-    onSuccess() {
+    onSuccess(data) {
       const roomName = form.getFieldValue('room-name');
       const price = parseInt(form.getFieldValue('price').replace(',', ''));
       const defaultCapacity = form.getFieldValue('defaultCapacity');
@@ -111,7 +120,18 @@ const RoomUpdate = () => {
       const checkInTime = form.getFieldValue('checkInTime').format('HH:mm');
       const checkOutTime = form.getFieldValue('checkOutTime').format('HH:mm');
       const count = form.getFieldValue('count');
+      const status = form.getFieldValue('status') ? 'SELLING' : 'STOP_SELLING';
 
+      const deleteObjects = deletedImageFile.map((image) => {
+        return { id: image.id };
+      });
+      const imageObjects = [];
+      for (let index = 0; index < data.data.urls.length; index++) {
+        const { url } = data.data.urls[index];
+        if (url) {
+          imageObjects.push({ url });
+        }
+      }
       const updatedRoomData: RoomUpdateData = {
         name: roomName,
         price: price,
@@ -119,45 +139,32 @@ const RoomUpdate = () => {
         maxCapacity: maxCapacity,
         checkInTime: checkInTime,
         checkOutTime: checkOutTime,
-        status: 'STOP_SELLING',
+        status,
         amount: count,
-        addImages: addedImageFile,
-        removeImages: deletedImageFile,
+        addImages: imageObjects,
+        deleteImages: deleteObjects as { id: number }[],
         option: selectedInitRoomOptions,
       };
       updateRoom(updatedRoomData);
-      setSelectedInitRoomOptions({
-        airCondition: false,
-        tv: false,
-        internet: false,
-      });
-      setImageFile([]);
     },
   });
 
   const onFinish = () => {
     const formData = new FormData();
 
-    let shouldExecuteImageFile = false;
-
-    for (let i = 0; i < imageFile.length; i++) {
-      const image = imageFile[i];
-      if (image.file) shouldExecuteImageFile = true;
-    }
-
     for (let index = 0; index < 5; index++) {
       const image = imageFile[index];
-      if (!image || image.file === null) {
-        // 등록한 적이 있거나 이미지 자체를 등록하지 않은 순서
+      if (image && image.file) {
+        formData.append(`image${index + 1}`, image.file);
+      } else {
         const emptyBlob = new Blob([], { type: 'application/octet-stream' });
         const nullFile = new File([emptyBlob], 'nullFile.txt', {
           type: 'text/plain',
         });
         formData.append(`image${index + 1}`, nullFile);
-      } else {
-        formData.append(`image${index + 1}`, image.file);
       }
     }
+
     getImageUrl(formData);
   };
 
@@ -197,12 +204,12 @@ const RoomUpdate = () => {
           form={form}
         />
         <StyledCenterVertically>
-          <StatusContainer />
+          <StatusContainer defaultStatus={data?.status} />
         </StyledCenterVertically>
         <StyledInputWrapper>
           <PriceContainer header="객실 가격" form={form} />
         </StyledInputWrapper>
-        <ImageUploadContainer header="객실 사진" images={imageFile} />
+        <ImageUploadContainer header="객실 사진" images={data?.images} />
         <StyledInputWrapper>
           <CountContainer header="객실 수" form={form} />
         </StyledInputWrapper>
