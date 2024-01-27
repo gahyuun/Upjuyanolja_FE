@@ -2,7 +2,7 @@ import { ROUTES } from '../routes';
 import { useRecoilValue } from 'recoil';
 import { accommodationState } from '@stores/accommodation/atom';
 
-export const getNavigationMap = () => {
+export const NavigationMap = () => {
   const selectedAccommodation = useRecoilValue(accommodationState);
 
   return {
