@@ -9,6 +9,7 @@ import { ReceiptModal } from '../payment/receipt';
 import { useState } from 'react';
 import { numberFormat } from '@/utils/Format/numberFormat';
 import { CancelModal } from '../payment/cancel';
+import { formatDate } from '@/utils/dateFormat/dateFormat';
 
 export const PointDetailList = () => {
   const pointDetailData = useRecoilValue(pointDetailDataState);
@@ -38,13 +39,13 @@ export const PointDetailList = () => {
 
   return (
     <StyledLayout>
-      {pointDetailData.histories &&
+      {pointDetailData.histories.length > 0 &&
         pointDetailData.histories.map((histories, index) => (
           <StyledList key={index}>
             <StyledListItem>
               <div>
                 <TextBox typography="body3" color="black900" fontWeight="400">
-                  {histories.receipt.tradeAt.split(' ')[0]}
+                  {formatDate(histories.receipt.tradeAt.split('T')[0]).format2}
                 </TextBox>
               </div>
               <OrderStatusBadge status={histories.status} />
